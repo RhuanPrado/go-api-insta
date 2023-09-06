@@ -29,7 +29,6 @@ func createUser(controller Controller) func(*fiber.Ctx) error {
 		}
 
 		err = user.Validate()
-
 		if err != nil {
 			logger.Production.Info(err.Error())
 			c.Status(fiber.StatusBadRequest)

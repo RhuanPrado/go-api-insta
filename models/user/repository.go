@@ -41,7 +41,7 @@ func (*UserRepository) UpdatedUserName(id string, username string) (*mongo.Updat
 
 func (*UserRepository) GetUserByUsername(username string) (*User, error) {
 
-	var user *User
+	user := &User{}
 
 	filter := bson.D{{Key: "username", Value: username}}
 
