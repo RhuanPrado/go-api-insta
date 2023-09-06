@@ -1,6 +1,7 @@
 package main
 
 import (
+	authmodule "go-api-insta/application/auth"
 	usermodule "go-api-insta/application/user"
 	"go-api-insta/helpers/database"
 	"go-api-insta/helpers/variable"
@@ -29,6 +30,7 @@ func main() {
 
 	app.Use(loggerFiber.New())
 
+	authmodule.AuthModuleDecorator(app)
 	usermodule.UserModuleDecorator(app)
 
 	app.Listen(":" + variable.GetEnvVariable("PORT"))

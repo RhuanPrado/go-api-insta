@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"go-api-insta/helpers/variable"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
@@ -45,4 +46,29 @@ func GetClaims(c *fiber.Ctx) jwt.MapClaims {
 
 	// Forwards the claims further to the function that is using them
 	return claims
+}
+
+func DecodeJwtSingleKey(c *fiber.Ctx, k string) interface{} {
+	claims := GetClaims(c)
+	return claims[k]
+}
+
+func EncodeJwt(dictionary map[string]interface{}) (string, error) {
+
+	// Create token
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	// Set claims
+	claims := token.Claims.(jwt.MapClaims)
+	claims["exp"] = time.Now().Add(time.Hour * 12).Unix()
+
+	// Basic claims are merged with the dictionary provided
+	for key, value := range dictionary {
+		claims[key] = value
+	}
+
+	// Generate encoded token and send it as response
+	encodedToken, err := token.SignedString([]byte(variable.GetEnvVariable("JWT_KEY")))
+
+	return encodedToken, err
 }

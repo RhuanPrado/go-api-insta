@@ -1,3 +1,5 @@
+github.com/alexedwards/argon2id v0.0.0-20230305115115-4b3c3280a736 h1:qZaEtLxnqY5mJ0fVKbk31NVhlgi0yrKm51Pq/I5wcz4=
+github.com/alexedwards/argon2id v0.0.0-20230305115115-4b3c3280a736/go.mod h1:mTeFRcTdnpzOlRjMoFYC/80HwVUreupyAiqPkCZQOXc=
 github.com/andybalholm/brotli v1.0.5 h1:8uQZIdzKmjc/iuPu7O2ioW48L81FgatrcpfFmiq/cCs=
 github.com/andybalholm/brotli v1.0.5/go.mod h1:fO7iG3H7G2nSZ7m0zPUDn85XEX2GTukHGRSepvi9Eig=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
