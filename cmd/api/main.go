@@ -1,6 +1,8 @@
 package main
 
 import (
+	usermodule "go-api-insta/application/user"
+	"go-api-insta/helpers/database"
 	"go-api-insta/helpers/variable"
 	"go-api-insta/libs/logger"
 
@@ -15,6 +17,8 @@ func main() {
 
 	logger.InitializeLogger()
 
+	database.Init()
+
 	app := fiber.New()
 
 	app.Use(recover.New())
@@ -24,6 +28,8 @@ func main() {
 	app.Use(cors.New(cors.ConfigDefault))
 
 	app.Use(loggerFiber.New())
+
+	usermodule.UserModuleDecorator(app)
 
 	app.Listen(":" + variable.GetEnvVariable("PORT"))
 
