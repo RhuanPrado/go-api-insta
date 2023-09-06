@@ -12,4 +12,5 @@ type User struct {
 	UpdatedAt time.Time          `bson:"updated_at"`
 	Username  string             `bson:"username"`
 	Password  string             `bson:"password"`
+	Friends   []string           `bson:"friends"`
 }

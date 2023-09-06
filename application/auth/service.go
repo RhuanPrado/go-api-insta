@@ -33,10 +33,10 @@ func (a *authService) Authorization(data *authdto.AuthDto) (*api.Response, int, 
 	if err != nil {
 		return &api.Response{Error: true, ErrorMessage: err.Error()}, fiber.StatusUnauthorized, err
 	}
-	println(user.ID.String())
+
 	if match {
 		dic := map[string]interface{}{
-			"id": user.ID.String(),
+			"id": user.ID.Hex(),
 		}
 
 		token, err := jwt.EncodeJwt(dic)

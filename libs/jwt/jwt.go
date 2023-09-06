@@ -30,7 +30,7 @@ func jwtError(c *fiber.Ctx, err error) error {
 func JwtProtected() func(*fiber.Ctx) error {
 
 	config := jwtMiddleware.Config{
-		SigningKey:   variable.GetEnvVariable("JWT_KEY"),
+		SigningKey:   []byte(variable.GetEnvVariable("JWT_KEY")),
 		ContextKey:   "authorization",
 		ErrorHandler: jwtError,
 	}
