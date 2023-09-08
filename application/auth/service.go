@@ -24,19 +24,19 @@ func newService() AuthService {
 
 func (a *authService) Authorization(data *authdto.AuthDto) (*api.Response, int, error) {
 
-	user, err := a.userRepository.GetUserByUsername(data.Username)
+	userL, err := a.userRepository.GetUserByUsername(data.Username)
 	if err != nil {
-		return &api.Response{Error: true, ErrorMessage: err.Error()}, fiber.StatusBadRequest, err
+		return &api.Response{Error: true, ErrorMessage: err.Error()}, fiber.StatusUnauthorized, err
 	}
 
-	match, err := argon2id.ComparePasswordAndHash(data.Password, user.Password)
+	match, err := argon2id.ComparePasswordAndHash(data.Password, userL.Password)
 	if err != nil {
 		return &api.Response{Error: true, ErrorMessage: err.Error()}, fiber.StatusUnauthorized, err
 	}
 
 	if match {
 		dic := map[string]interface{}{
-			"id": user.ID.Hex(),
+			"id": userL.ID.Hex(),
 		}
 
 		token, err := jwt.EncodeJwt(dic)
@@ -44,7 +44,21 @@ func (a *authService) Authorization(data *authdto.AuthDto) (*api.Response, int, 
 			return &api.Response{Error: true, ErrorMessage: err.Error()}, fiber.StatusInternalServerError, err
 		}
 
-		return &api.Response{Error: false, Payload: token}, fiber.StatusOK, err
+		payload := struct {
+			User struct {
+				Id       string   `json:"id"`
+				Username string   `json:"username"`
+				Friends  []string `json:"friends"`
+			} `json:"user"`
+			Token string `json:"token"`
+		}{}
+
+		payload.User.Username = userL.Username
+		payload.User.Id = userL.ID.Hex()
+		payload.User.Friends = userL.Friends
+		payload.Token = token
+
+		return &api.Response{Error: false, Payload: payload}, fiber.StatusOK, err
 	}
 
 	return nil, fiber.StatusUnauthorized, nil

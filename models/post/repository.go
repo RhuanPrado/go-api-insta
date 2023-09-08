@@ -50,7 +50,7 @@ func (*PostRepository) FindAllPostByUser(id string) ([]Post, error) {
 func (*PostRepository) FindAllPostFriends(friends []string) ([]Post, error) {
 
 	filter := bson.M{"userId": bson.M{"$in": friends}}
-	options := options.Find().SetSort(bson.D{{Key: "created_at", Value: 1}})
+	options := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}})
 	cursor, err := repository.Find(context.TODO(), filter, options)
 	if err != nil {
 		return nil, err

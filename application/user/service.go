@@ -15,6 +15,7 @@ type UserService interface {
 	CreateUser(data *userdto.UserDto) (*api.Response, int, error)
 	UpdateUsername(id string, data *userdto.UserUpdateDto) (*api.Response, int, error)
 	FindUsers(userId string) (*api.Response, int, error)
+	FindFriends(userId string) (*api.Response, int, error)
 	UpdateUserFriends(id string, friends []string) (*api.Response, int, error)
 }
 
@@ -69,7 +70,24 @@ func (u *userService) UpdateUserFriends(id string, friends []string) (*api.Respo
 }
 
 func (u *userService) FindUsers(userId string) (*api.Response, int, error) {
-	users, err := u.repository.ListUsers(userId)
+	user, err := u.repository.GetUserById(userId)
+	if err != nil {
+		return &api.Response{Error: true, ErrorMessage: err.Error(), Payload: "error find user"}, fiber.StatusInternalServerError, err
+	}
+
+	users, err := u.repository.ListUsers(userId, user.Friends)
+	if err != nil {
+		return &api.Response{Error: true, ErrorMessage: err.Error(), Payload: "error find users"}, fiber.StatusInternalServerError, err
+	}
+	return &api.Response{Error: false, Payload: u.returnUsers(users)}, fiber.StatusOK, nil
+}
+
+func (u *userService) FindFriends(userId string) (*api.Response, int, error) {
+	user, err := u.repository.GetUserById(userId)
+	if err != nil {
+		return &api.Response{Error: true, ErrorMessage: err.Error(), Payload: "error find users"}, fiber.StatusInternalServerError, err
+	}
+	users, err := u.repository.ListUsersFriends(userId, user.Friends)
 	if err != nil {
 		return &api.Response{Error: true, ErrorMessage: err.Error(), Payload: "error find users"}, fiber.StatusInternalServerError, err
 	}

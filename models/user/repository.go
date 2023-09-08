@@ -58,7 +58,7 @@ func (*UserRepository) GetUserByUsername(username string) (*User, error) {
 	}
 
 	if user.Username == "" {
-		return nil, nil
+		return nil, errors.New("users does not exists")
 	}
 
 	return user, nil
@@ -106,20 +106,13 @@ func (*UserRepository) UpdatedFriends(id string, friends []string) (*mongo.Updat
 	return repository.UpdateOne(context.TODO(), filter, update)
 }
 
-func (*UserRepository) ListUsers(id string) ([]User, error) {
+func (*UserRepository) ListUsers(id string, friends []string) ([]User, error) {
 
-	userExists := &User{}
+	usersFilter := append(friends, id)
+	objIds := listIdToObejectId(usersFilter)
+	filter := bson.M{"_id": bson.M{"$nin": objIds}}
 
-	filter := bson.M{"_id": bson.M{"$ne": id}}
-
-	err := repository.FindOne(context.TODO(), filter).Decode(userExists)
-	if err != nil {
-		println(err.Error())
-		return nil, err
-	}
-	if userExists.Username == "" {
-		return nil, errors.New("user dont exists")
-	}
+	println(filter)
 
 	cursor, err := repository.Find(context.TODO(), filter)
 	if err != nil {
@@ -127,7 +120,7 @@ func (*UserRepository) ListUsers(id string) ([]User, error) {
 	}
 	users := []User{}
 	for cursor.Next(context.TODO()) {
-		//Create a value into which the single document can be decoded
+
 		var elem User
 		err := cursor.Decode(&elem)
 		if err != nil {
@@ -137,4 +130,40 @@ func (*UserRepository) ListUsers(id string) ([]User, error) {
 		users = append(users, elem)
 	}
 	return users, nil
+}
+
+func (*UserRepository) ListUsersFriends(id string, friends []string) ([]User, error) {
+
+	objIds := listIdToObejectId(friends)
+
+	filter := bson.M{"_id": bson.M{"$in": objIds}}
+
+	cursor, err := repository.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	users := []User{}
+	for cursor.Next(context.TODO()) {
+
+		var elem User
+		err := cursor.Decode(&elem)
+		if err != nil {
+			logger.Production.Info("error decode post element array")
+		}
+
+		users = append(users, elem)
+	}
+	return users, nil
+}
+
+func listIdToObejectId(list []string) []primitive.ObjectID {
+	listObjId := []primitive.ObjectID{}
+	for _, ele := range list {
+		objId, err := primitive.ObjectIDFromHex(ele)
+		if err != nil {
+			logger.Production.Info("error objectId")
+		}
+		listObjId = append(listObjId, objId)
+	}
+	return listObjId
 }

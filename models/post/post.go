@@ -7,10 +7,10 @@ import (
 )
 
 type Post struct {
-	ID          primitive.ObjectID `bson:"_id"`
-	CreatedAt   time.Time          `bson:"created_at"`
-	UpdatedAt   time.Time          `bson:"updated_at"`
-	Description string             `bson:"description"`
-	File        []byte             `bson:"file"`
-	UserId      string             `bson:"userId"`
+	ID          primitive.ObjectID `json:"id" bson:"_id"`
+	CreatedAt   time.Time          `json:"created_at" bson:"created_at"`
+	UpdatedAt   time.Time          `json:"updated_at" bson:"updated_at"`
+	Description string             `json:"description" bson:"description"`
+	File        []byte             `json:"file" bson:"file"`
+	UserId      string             `json:"userId" bson:"userId"`
 }

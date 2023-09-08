@@ -10,6 +10,7 @@ type Controller interface {
 	CreateUser(data *userdto.UserDto) (*api.Response, int, error)
 	UpdateUsername(id string, data *userdto.UserUpdateDto) (*api.Response, int, error)
 	FindUsers(userId string) (*api.Response, int, error)
+	FindFriends(userId string) (*api.Response, int, error)
 	UpdateUserFriends(id string, friends []string) (*api.Response, int, error)
 }
 
@@ -33,6 +34,10 @@ func (c *controller) UpdateUsername(id string, data *userdto.UserUpdateDto) (*ap
 
 func (c *controller) FindUsers(id string) (*api.Response, int, error) {
 	return c.UserService.FindUsers(id)
+}
+
+func (c *controller) FindUsersFriends(id string) (*api.Response, int, error) {
+	return c.UserService.FindFriends(id)
 }
 
 func (c *controller) UpdateUserFriends(id string, friends []string) (*api.Response, int, error) {

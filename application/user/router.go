@@ -12,7 +12,8 @@ import (
 func newRoutes(c Controller, app *fiber.App) {
 	app.Post("/user", createUser(c))
 	app.Put("/user", jwt.JwtProtected(), updatedUserName(c))
-	app.Put("/user/friends", jwt.JwtProtected(), updateFriends(c))
+	app.Post("/user/friends", jwt.JwtProtected(), updateFriends(c))
+	app.Get("/user/friends", jwt.JwtProtected(), findUsersFriends(c))
 	app.Get("/users", jwt.JwtProtected(), findUsers(c))
 }
 
@@ -131,6 +132,25 @@ func findUsers(controller Controller) func(*fiber.Ctx) error {
 		id := jwt.DecodeJwtSingleKey(c, "id").(string)
 
 		response, statusCode, err := controller.FindUsers(id)
+
+		if err != nil {
+			logger.Production.Info(err.Error())
+			c.Status(fiber.StatusInternalServerError)
+			return c.JSON(api.Response{
+				Error:        true,
+				ErrorMessage: err.Error(),
+			})
+		}
+
+		return c.Status(statusCode).JSON(response)
+	}
+}
+
+func findUsersFriends(controller Controller) func(*fiber.Ctx) error {
+	return func(c *fiber.Ctx) error {
+		id := jwt.DecodeJwtSingleKey(c, "id").(string)
+
+		response, statusCode, err := controller.FindFriends(id)
 
 		if err != nil {
 			logger.Production.Info(err.Error())

@@ -39,7 +39,7 @@ func authorization(controller Controller) func(*fiber.Ctx) error {
 		response, statusCode, err := controller.Authorization(auth)
 		if err != nil {
 			logger.Production.Info(err.Error())
-			c.Status(fiber.StatusInternalServerError)
+			c.Status(statusCode)
 			return c.JSON(api.Response{
 				Error:        true,
 				ErrorMessage: err.Error(),

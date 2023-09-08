@@ -52,7 +52,9 @@ func (p *postService) FindAllPostFriends(id string) (*api.Response, int, error) 
 		return &api.Response{Error: true, ErrorMessage: err.Error(), Payload: "error insert user"}, fiber.StatusBadRequest, err
 	}
 
-	postsUser, err := p.postRepository.FindAllPostFriends(user.Friends)
+	friendAndUser := append(user.Friends, id)
+
+	postsUser, err := p.postRepository.FindAllPostFriends(friendAndUser)
 	if err != nil {
 		return &api.Response{Error: true, ErrorMessage: err.Error(), Payload: "error insert user"}, fiber.StatusBadRequest, err
 	}
